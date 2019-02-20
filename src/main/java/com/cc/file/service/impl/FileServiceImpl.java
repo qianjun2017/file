@@ -3,7 +3,10 @@
  */
 package com.cc.file.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,10 @@ import com.cc.common.exception.LogicException;
 import com.cc.file.config.FileConfig;
 import com.cc.file.service.FileService;
 import com.cc.file.strategy.FileStrategy;
+
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.Thumbnails.Builder;
+
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
 
@@ -45,6 +52,16 @@ public class FileServiceImpl implements FileService {
 	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			List<String> urls = new ArrayList<String>();
+			String type = request.getParameter("type");
+			String size = null;
+			Boolean keep = Boolean.FALSE;
+			if("image".equals(type)){
+				size = request.getParameter("size");
+				String k = request.getParameter("keep");
+				if(!StringTools.isNullOrNone(k) && "true".equals(k)){
+					keep = Boolean.TRUE;
+				}
+			}
 			List<MultipartFile> fileList = ((MultipartHttpServletRequest)request).getFiles("file");
 			for (MultipartFile file : fileList) {
 				String fileName = file.getOriginalFilename();
@@ -54,7 +71,23 @@ public class FileServiceImpl implements FileService {
 				}
 				checkFileExt(fileName);
 				fileName = makeFileName(fileName);
-				urls.add(strategy.uploadFile(file.getInputStream(), fileConfig.getPath(), getSubPath(request, fileName), fileName));
+				InputStream inputStream = file.getInputStream();
+				if("image".equals(type)){
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					Builder<? extends InputStream> builder = Thumbnails.of(inputStream).outputQuality(1.f);
+					if(!StringTools.isNullOrNone(size)){
+						String[] wh = size.split("x");
+						int width = Integer.parseInt(wh[0]);
+						int height = width;
+						if(wh.length>1){
+							height = Integer.parseInt(wh[1]);
+						}
+						builder = builder.size(width, height).keepAspectRatio(keep);
+					}
+					builder.toOutputStream(out);
+					inputStream = new ByteArrayInputStream(out.toByteArray());
+				}
+				urls.add(strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, fileName), fileName));
 			}
 			request.setAttribute("urls", urls);
 		} catch (IOException e) {
