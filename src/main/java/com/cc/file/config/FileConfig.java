@@ -20,6 +20,11 @@ public class FileConfig {
 	private String path;
 	
 	/**
+	 * 静态文件访问路径
+	 */
+	private String location;
+	
+	/**
 	 * 允许的文件扩展名
 	 */
 	private String allowedExt;
@@ -88,5 +93,19 @@ public class FileConfig {
 	 */
 	public void setDisperse(boolean disperse) {
 		this.disperse = disperse;
+	}
+
+	/**
+	 * @return the location
+	 */
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

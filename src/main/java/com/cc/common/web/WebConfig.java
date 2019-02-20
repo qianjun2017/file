@@ -61,7 +61,7 @@ public class WebConfig implements WebMvcConfigurer {
 		FileStrategy fileStrategy = (FileStrategy)SpringContextUtil.getBean(FileStrategy.class);
 		if(fileStrategy instanceof NativeFileStrategy){
 			FileConfig fileConfig = (FileConfig)SpringContextUtil.getBean(FileConfig.class);
-			registry.addResourceHandler("/files/**").addResourceLocations("file:"+fileConfig.getPath());
+			registry.addResourceHandler("/files/**").addResourceLocations("file:"+fileConfig.getLocation());
 		}
 	}
 
