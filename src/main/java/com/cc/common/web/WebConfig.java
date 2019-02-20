@@ -3,7 +3,6 @@
  */
 package com.cc.common.web;
 
-import java.io.File;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
@@ -62,7 +61,7 @@ public class WebConfig implements WebMvcConfigurer {
 		FileStrategy fileStrategy = (FileStrategy)SpringContextUtil.getBean(FileStrategy.class);
 		if(fileStrategy instanceof NativeFileStrategy){
 			FileConfig fileConfig = (FileConfig)SpringContextUtil.getBean(FileConfig.class);
-			registry.addResourceHandler(File.pathSeparator+"files"+File.pathSeparator+"**").addResourceLocations("file:"+fileConfig.getPath());
+			registry.addResourceHandler("/files/**").addResourceLocations("file:"+fileConfig.getPath());
 		}
 	}
 

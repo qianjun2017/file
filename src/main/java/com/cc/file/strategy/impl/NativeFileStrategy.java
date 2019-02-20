@@ -30,7 +30,7 @@ public class NativeFileStrategy extends FileStrategy {
 			throw new LogicException("E001", "创建文件目录失败");
 		}
 		try {
-			OutputStream outputStream = new FileOutputStream(new File(path, fileName));
+			OutputStream outputStream = new FileOutputStream(new File(path+subPath, fileName));
 			byte buffer[] = new byte[1024];
 			int len = 0;
 			while((len = inputStream.read(buffer)) > 0){
@@ -43,7 +43,7 @@ public class NativeFileStrategy extends FileStrategy {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return File.pathSeparator+"files"+subPath+File.pathSeparator+fileName;
+		return "/files"+subPath+"/"+fileName;
 	}
 
 	@Override

@@ -3,7 +3,6 @@
  */
 package com.cc.file.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import com.cc.common.exception.LogicException;
 import com.cc.file.config.FileConfig;
 import com.cc.file.service.FileService;
 import com.cc.file.strategy.FileStrategy;
-import com.cc.file.strategy.impl.NativeFileStrategy;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
 
@@ -56,12 +54,7 @@ public class FileServiceImpl implements FileService {
 				}
 				checkFileExt(fileName);
 				fileName = makeFileName(fileName);
-				String fileUrl = strategy.uploadFile(file.getInputStream(), fileConfig.getPath(), getSubPath(request, fileName), fileName);
-				if(strategy instanceof NativeFileStrategy){
-					urls.add(request.getSession().getServletContext().getRealPath(fileUrl));
-				}else{
-					urls.add(fileUrl);
-				}
+				urls.add(strategy.uploadFile(file.getInputStream(), fileConfig.getPath(), getSubPath(request, fileName), fileName));
 			}
 			request.setAttribute("urls", urls);
 		} catch (IOException e) {
@@ -135,7 +128,7 @@ public class FileServiceImpl implements FileService {
 		StringBuffer buffer = new StringBuffer();
 		String type = request.getParameter("type");
 		if(!StringTools.isNullOrNone(type)){
-			buffer.append(File.pathSeparator).append(type);
+			buffer.append("/").append(type);
 		}
 		if (fileConfig.isDisperse()) {
 			buffer.append(disperseFile(fileName));
@@ -152,7 +145,7 @@ public class FileServiceImpl implements FileService {
 		int hashCode = fileName.hashCode();
 		String dir1 = Integer.toHexString(hashCode & 0xF);
 		String dir2 = Integer.toHexString(hashCode >>> 4 & 0xF);
-		return File.pathSeparator+dir1+File.pathSeparator+dir2;
+		return "/"+dir1+"/"+dir2;
 	}
 	
 	/**
