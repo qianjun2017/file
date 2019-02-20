@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cc</groupId>
+  <artifactId>file</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+  	<java.version>1.8</java.version>
+  	<spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+  	<httpclient.version>4.5.5</httpclient.version>
+  </properties>
+
+	<repositories>
+		<repository>
+			<id>maven</id>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+		</repository>
+		<repository>
+			<id>jahia</id>
+			<url>http://maven.jahia.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>Atlassian 3rd-Party Repository</id>
+			<url>https://maven.atlassian.com/3rdparty/</url>
+		</repository>
+	</repositories>
+
+  <dependencies>
+  	<!-- web支持 springMVC -->
+  	<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-starter-web</artifactId>
+  		<version>${spring.boot.version}</version>
+  	</dependency>
+	<!-- tomcat -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-tomcat</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+  	<!-- test支持 junit -->
+  	<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-starter-test</artifactId>
+  		<version>${spring.boot.version}</version>
+  	</dependency>
+  	<!-- @ConfigurationProperties注解支持 -->
+  	<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-configuration-processor</artifactId>
+  		<optional>true</optional>
+  		<version>${spring.boot.version}</version>
+  	</dependency>
+  	<!-- httpclient 支持 -->
+  	<dependency>
+  		<groupId>org.apache.httpcomponents</groupId>
+  		<artifactId>httpclient</artifactId>
+  		<version>${httpclient.version}</version>
+  	</dependency>
+  </dependencies>
+  <build>
+	<finalName>file</finalName>
+    <plugins>
+      <plugin>
+		  <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+      	<groupId>org.springframework.boot</groupId>
+      	<artifactId>spring-boot-maven-plugin</artifactId>
+      	<version>${spring.boot.version}</version>
+		  <configuration>
+			  <mainClass>com.cc.Application</mainClass>
+		  </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
