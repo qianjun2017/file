@@ -10,9 +10,9 @@
         </encoder>
     </appender>
     <appender name="APPEND" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${catalina.home:-.}/logs/love_now.log</file>
+        <file>${catalina.home:-.}/logs/file_now.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${catalina.home:-.}/logs/love_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${catalina.home:-.}/logs/file_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <maxFileSize>20MB</maxFileSize>
             <totalSizeCap>3GB</totalSizeCap>
