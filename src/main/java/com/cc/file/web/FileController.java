@@ -44,12 +44,12 @@ public class FileController {
 			fileService.uploadFile(httpRequest, hhtpResponse);
 			Object object = httpRequest.getAttribute("urls");
 			if (object==null || !(object instanceof List<?>)) {
-				response.setMessage("上传图片失败");
+				response.setMessage("上传文件失败");
 				return response;
 			}
 			List<String> urlList = (List<String>) object;
 			if (ListTools.isEmptyOrNull(urlList)) {
-				response.setMessage("上传图片失败");
+				response.setMessage("上传文件失败");
 				return response;
 			}
 			String[] urls = new String[urlList.size()];
@@ -61,7 +61,7 @@ public class FileController {
 		} catch (LogicException e) {
 			response.setMessage(e.getErrContent());
 		} catch (Exception e) {
-			response.setMessage("上传图片异常");
+			response.setMessage("上传文件异常");
 			e.printStackTrace();
 		}
 		return response;
