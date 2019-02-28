@@ -40,12 +40,6 @@
   		<artifactId>spring-boot-starter-web</artifactId>
   		<version>${spring.boot.version}</version>
   	</dependency>
-	<!-- tomcat -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-tomcat</artifactId>
-		<version>${spring.boot.version}</version>
-	</dependency>
   	<!-- test支持 junit -->
   	<dependency>
   		<groupId>org.springframework.boot</groupId>
@@ -76,7 +70,7 @@
 	<finalName>file</finalName>
     <plugins>
       <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
+		<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>${java.version}</source>
@@ -87,9 +81,6 @@
       	<groupId>org.springframework.boot</groupId>
       	<artifactId>spring-boot-maven-plugin</artifactId>
       	<version>${spring.boot.version}</version>
-		  <configuration>
-			  <mainClass>com.cc.Application</mainClass>
-		  </configuration>
       </plugin>
     </plugins>
   </build>
