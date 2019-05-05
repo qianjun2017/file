@@ -72,19 +72,16 @@ public class FileServiceImpl implements FileService {
 				checkFileExt(fileName);
 				fileName = makeFileName(fileName);
 				InputStream inputStream = file.getInputStream();
-				if("image".equals(type)){
+				if("image".equals(type) && !StringTools.isNullOrNone(size)){
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					Builder<? extends InputStream> builder = Thumbnails.of(inputStream).outputQuality(1.f);
-					if(!StringTools.isNullOrNone(size)){
-						String[] wh = size.split("x");
-						int width = Integer.parseInt(wh[0]);
-						int height = width;
-						if(wh.length>1){
-							height = Integer.parseInt(wh[1]);
-						}
-						builder = builder.size(width, height).keepAspectRatio(keep);
+					String[] wh = size.split("x");
+					int width = Integer.parseInt(wh[0]);
+					int height = width;
+					if(wh.length>1){
+						height = Integer.parseInt(wh[1]);
 					}
-					builder.toOutputStream(out);
+					builder.size(width, height).keepAspectRatio(keep).toOutputStream(out);
 					inputStream = new ByteArrayInputStream(out.toByteArray());
 				}
 				urls.add(strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, fileName), fileName));
