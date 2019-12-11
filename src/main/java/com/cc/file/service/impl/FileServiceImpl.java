@@ -54,10 +54,14 @@ public class FileServiceImpl implements FileService {
 	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String appCode = request.getHeader("appcode");
-			if(fileConfig.isAppCode()){
-				List<SystemConfigBean> versionSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", appCode);
-		    	if(ListTools.isEmptyOrNull(versionSystemConfigBeanList)){
-		    		throw new LogicException("E001", "未知应用，禁止上传");
+			List<SystemConfigBean> fileAppCodeSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", "file.appCode");
+			if(ListTools.isEmptyOrNull(fileAppCodeSystemConfigBeanList) || "true".equals(fileAppCodeSystemConfigBeanList.get(0).getPropertyValue())){
+				if(StringTools.isNullOrNone(appCode)){
+					throw new LogicException("E001", "未知应用，禁止上传");
+				}
+				List<SystemConfigBean> appCodeSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", appCode);
+		    	if(ListTools.isEmptyOrNull(appCodeSystemConfigBeanList)){
+		    		throw new LogicException("E002", "未知应用，禁止上传");
 		    	}
 			}
 			List<String> urls = new ArrayList<String>();

@@ -38,11 +38,6 @@ public class FileConfig {
 	 * 分散文件存放
 	 */
 	private boolean disperse;
-	
-	/**
-	 * 是否包含appCode
-	 */
-	private boolean appCode;
 
 	/**
 	 * @return the path
@@ -112,19 +107,5 @@ public class FileConfig {
 	 */
 	public void setLocation(String location) {
 		this.location = location;
-	}
-
-	/**
-	 * @return the appCode
-	 */
-	public boolean isAppCode() {
-		return appCode;
-	}
-
-	/**
-	 * @param appCode the appCode to set
-	 */
-	public void setAppCode(boolean appCode) {
-		this.appCode = appCode;
 	}
 }
