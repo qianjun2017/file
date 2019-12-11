@@ -22,10 +22,12 @@ import com.cc.common.exception.LogicException;
 import com.cc.file.config.FileConfig;
 import com.cc.file.service.FileService;
 import com.cc.file.strategy.FileStrategy;
+import com.cc.system.config.bean.SystemConfigBean;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
+import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
 
@@ -51,6 +53,13 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		try {
+			String appCode = request.getHeader("appcode");
+			if(fileConfig.isAppCode()){
+				List<SystemConfigBean> versionSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", appCode);
+		    	if(ListTools.isEmptyOrNull(versionSystemConfigBeanList)){
+		    		throw new LogicException("E001", "未知应用，禁止上传");
+		    	}
+			}
 			List<String> urls = new ArrayList<String>();
 			String type = request.getParameter("type");
 			String size = null;
@@ -84,7 +93,7 @@ public class FileServiceImpl implements FileService {
 					builder.size(width, height).keepAspectRatio(keep).toOutputStream(out);
 					inputStream = new ByteArrayInputStream(out.toByteArray());
 				}
-				urls.add(strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, fileName), fileName));
+				urls.add(strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, appCode, fileName), fileName));
 			}
 			request.setAttribute("urls", urls);
 		} catch (IOException e) {
@@ -95,9 +104,10 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
+		String appCode = request.getHeader("appCode");
 		String fileName = request.getParameter("fileName");
 		try {
-			strategy.downloadFile(response.getOutputStream(), fileConfig.getPath(), getSubPath(request, fileName), fileName);
+			strategy.downloadFile(response.getOutputStream(), fileConfig.getPath(), getSubPath(request, appCode, fileName), fileName);
 			fileName = getRealFileName(fileName);
 			response.setHeader("content-disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
 		} catch (IOException e) {
@@ -151,12 +161,16 @@ public class FileServiceImpl implements FileService {
 	/**
 	 * 获取保存文件的文件夹
 	 * @param request
+	 * @param appCode
 	 * @param fileName
 	 * @return
 	 */
-	public String getSubPath(HttpServletRequest request, String fileName){
+	public String getSubPath(HttpServletRequest request, String appCode, String fileName){
 		StringBuffer buffer = new StringBuffer();
 		String type = request.getParameter("type");
+		if(!StringTools.isNullOrNone(appCode)){
+			buffer.append("/").append(appCode);
+		}
 		if(!StringTools.isNullOrNone(type)){
 			buffer.append("/").append(type);
 		}
