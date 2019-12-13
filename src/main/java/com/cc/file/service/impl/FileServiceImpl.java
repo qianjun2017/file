@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cc.common.exception.LogicException;
+import com.cc.file.bean.FileBean;
 import com.cc.file.config.FileConfig;
 import com.cc.file.service.FileService;
 import com.cc.file.strategy.FileStrategy;
@@ -27,6 +28,7 @@ import com.cc.system.config.bean.SystemConfigBean;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
+import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
@@ -77,12 +79,16 @@ public class FileServiceImpl implements FileService {
 			}
 			List<MultipartFile> fileList = ((MultipartHttpServletRequest)request).getFiles("file");
 			for (MultipartFile file : fileList) {
+				FileBean fileBean = new FileBean();
+				fileBean.setAppCode(appCode);
 				String fileName = file.getOriginalFilename();
 				int lastIndex = fileName.lastIndexOf("\\");
 				if(lastIndex != -1) {
 					fileName = fileName.substring(lastIndex + 1);
 				}
 				checkFileExt(fileName);
+				fileBean.setName(fileName);
+				fileBean.setType(getFileExt(fileName));
 				fileName = makeFileName(fileName);
 				InputStream inputStream = file.getInputStream();
 				if("image".equals(type) && !StringTools.isNullOrNone(size)){
@@ -97,7 +103,11 @@ public class FileServiceImpl implements FileService {
 					builder.size(width, height).keepAspectRatio(keep).toOutputStream(out);
 					inputStream = new ByteArrayInputStream(out.toByteArray());
 				}
-				urls.add(strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, appCode, fileName), fileName));
+				String fileUrl = strategy.uploadFile(inputStream, fileConfig.getPath(), getSubPath(request, appCode, fileName), fileName);
+				fileBean.setUrl(fileUrl);
+				fileBean.setCreateTime(DateTools.now());
+				fileBean.save();
+				urls.add(fileUrl);
 			}
 			request.setAttribute("urls", urls);
 		} catch (IOException e) {
@@ -128,11 +138,7 @@ public class FileServiceImpl implements FileService {
 		if (StringTools.isAllNullOrNone(new String[]{fileConfig.getAllowedExt(),fileConfig.getDeniedExt()})) {
 			return;
 		}
-		int lastIndexOf = fileName.lastIndexOf(".");
-		String ext = null;
-		if (lastIndexOf!=-1) {
-			ext = fileName.substring(lastIndexOf+1);
-		}
+		String ext = getFileExt(fileName);
 		if (StringTools.isNullOrNone(ext)) {
 			throw new LogicException("E001", "无法判断文件类型");
 		}
@@ -160,6 +166,22 @@ public class FileServiceImpl implements FileService {
 				throw new LogicException("E002", "文件类型不正确");
 			}
 		}
+	}
+	
+	/**
+	 * 获取文件扩展类型
+	 * @param fileName
+	 * @return
+	 */
+	public String getFileExt(String fileName){
+		if (StringTools.isNullOrNone(fileName)) {
+			return null;
+		}
+		int lastIndexOf = fileName.lastIndexOf(".");
+		if (lastIndexOf==-1) {
+			return null;
+		}
+		return fileName.substring(lastIndexOf+1);
 	}
 	
 	/**
