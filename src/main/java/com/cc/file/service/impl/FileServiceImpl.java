@@ -8,7 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,7 +68,6 @@ public class FileServiceImpl implements FileService {
 		    		throw new LogicException("E002", "未知应用，禁止上传");
 		    	}
 			}
-			List<String> urls = new ArrayList<String>();
 			String type = request.getParameter("type");
 			String size = null;
 			Boolean keep = Boolean.FALSE;
@@ -77,8 +78,10 @@ public class FileServiceImpl implements FileService {
 					keep = Boolean.TRUE;
 				}
 			}
+			List<Map<String, Object>> fileMapList = new ArrayList<Map<String, Object>>();
 			List<MultipartFile> fileList = ((MultipartHttpServletRequest)request).getFiles("file");
 			for (MultipartFile file : fileList) {
+				Map<String, Object> fileMap = new HashMap<String, Object>();
 				FileBean fileBean = new FileBean();
 				fileBean.setAppCode(appCode);
 				String fileName = file.getOriginalFilename();
@@ -107,9 +110,15 @@ public class FileServiceImpl implements FileService {
 				fileBean.setUrl(fileUrl);
 				fileBean.setCreateTime(DateTools.now());
 				fileBean.save();
-				urls.add(fileUrl);
+				fileMap.put("url", fileBean.getUrl());
+				fileMap.put("type", fileBean.getType());
+				fileMap.put("originalFileName", fileBean.getName());
+				fileMap.put("fileName", fileName);
+				fileMapList.add(fileMap);
 			}
-			request.setAttribute("urls", urls);
+			if(!ListTools.isEmptyOrNull(fileMapList)){
+				request.setAttribute("fileMapList", fileMapList);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new LogicException("E004", "文件上传异常");

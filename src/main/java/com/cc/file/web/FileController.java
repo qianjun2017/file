@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
-import com.cc.common.tools.ListTools;
 import com.cc.common.web.Response;
 import com.cc.file.service.FileService;
 
@@ -38,25 +37,16 @@ public class FileController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/up", method = RequestMethod.POST)
-	public Response<String[]> uploadImages(HttpServletRequest httpRequest, HttpServletResponse hhtpResponse){
-		Response<String[]> response = new Response<String[]>();
+	public Response<Object> uploadImages(HttpServletRequest httpRequest, HttpServletResponse hhtpResponse){
+		Response<Object> response = new Response<Object>();
 		try {
 			fileService.uploadFile(httpRequest, hhtpResponse);
-			Object object = httpRequest.getAttribute("urls");
-			if (object==null || !(object instanceof List<?>)) {
+			Object fileMapList = httpRequest.getAttribute("fileMapList");
+			if (fileMapList==null || !(fileMapList instanceof List<?>)) {
 				response.setMessage("上传文件失败");
 				return response;
 			}
-			List<String> urlList = (List<String>) object;
-			if (ListTools.isEmptyOrNull(urlList)) {
-				response.setMessage("上传文件失败");
-				return response;
-			}
-			String[] urls = new String[urlList.size()];
-			for (String url : urlList) {
-				urls[urlList.indexOf(url)] = url;
-			}
-			response.setData(urls);
+			response.setData(fileMapList);
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {
 			response.setMessage(e.getErrContent());
