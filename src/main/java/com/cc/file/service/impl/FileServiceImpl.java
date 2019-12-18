@@ -160,7 +160,7 @@ public class FileServiceImpl implements FileService {
 				}
 			}
 			if(!allowed){
-				throw new LogicException("E002", "文件类型不正确");
+				throw new LogicException("E002", ext+"类型文件不在允许范围内，请选择"+fileConfig.getAllowedExt().replaceAll(",", "、"));
 			}
 		}
 		if (!StringTools.isNullOrNone(fileConfig.getDeniedExt())) {
@@ -172,7 +172,7 @@ public class FileServiceImpl implements FileService {
 				}
 			}
 			if(denied){
-				throw new LogicException("E002", "文件类型不正确");
+				throw new LogicException("E002", ext+"类型文件禁止上传");
 			}
 		}
 	}
