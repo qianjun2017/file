@@ -80,6 +80,9 @@ public class FileServiceImpl implements FileService {
 			}
 			List<Map<String, Object>> fileMapList = new ArrayList<Map<String, Object>>();
 			List<MultipartFile> fileList = ((MultipartHttpServletRequest)request).getFiles("file");
+			if(ListTools.isEmptyOrNull(fileList)){
+				throw new LogicException("E003", "未发现文件");
+			}
 			for (MultipartFile file : fileList) {
 				Map<String, Object> fileMap = new HashMap<String, Object>();
 				FileBean fileBean = new FileBean();
