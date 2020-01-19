@@ -5,6 +5,7 @@ package com.cc.file.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -216,10 +217,10 @@ public class FileServiceImpl implements FileService {
 		StringBuffer buffer = new StringBuffer();
 		String type = request.getParameter("type");
 		if(!StringTools.isNullOrNone(appCode)){
-			buffer.append("/").append(appCode);
+			buffer.append(File.separator).append(appCode);
 		}
 		if(!StringTools.isNullOrNone(type)){
-			buffer.append("/").append(type);
+			buffer.append(File.separator).append(type);
 		}
 		if (fileConfig.isDisperse()) {
 			buffer.append(disperseFile(fileName));
@@ -236,7 +237,7 @@ public class FileServiceImpl implements FileService {
 		int hashCode = fileName.hashCode();
 		String dir1 = Integer.toHexString(hashCode & 0xF);
 		String dir2 = Integer.toHexString(hashCode >>> 4 & 0xF);
-		return "/"+dir1+"/"+dir2;
+		return File.separator+dir1+File.separator+dir2;
 	}
 	
 	/**
