@@ -43,7 +43,7 @@ public class NativeFileStrategy extends FileStrategy {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "/files"+subPath.replaceAll(File.separator, "/")+"/"+fileName;
+		return "/files"+subPath.replaceAll("\\\\", "/")+"/"+fileName;
 	}
 
 	@Override
