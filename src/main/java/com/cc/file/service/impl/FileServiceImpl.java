@@ -94,7 +94,7 @@ public class FileServiceImpl implements FileService {
 				}
 				checkFileExt(fileName);
 				fileBean.setName(fileName);
-				fileBean.setType(getFileExt(fileName));
+				fileBean.setExt(getFileExt(fileName));
 				fileName = makeFileName(fileName);
 				InputStream inputStream = file.getInputStream();
 				if("image".equals(type) && !StringTools.isNullOrNone(size)){
@@ -114,7 +114,7 @@ public class FileServiceImpl implements FileService {
 				fileBean.setCreateTime(DateTools.now());
 				fileBean.save();
 				fileMap.put("url", fileBean.getUrl());
-				fileMap.put("type", fileBean.getType());
+				fileMap.put("ext", fileBean.getExt());
 				fileMap.put("originalFileName", fileBean.getName());
 				fileMap.put("fileName", fileName);
 				fileMapList.add(fileMap);

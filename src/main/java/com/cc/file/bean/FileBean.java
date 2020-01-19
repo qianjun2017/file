@@ -36,9 +36,9 @@ public class FileBean extends BaseOrm<FileBean> implements BaseEntity {
 	private String name;
 	
 	/**
-	 * 文件类型
+	 * 文件后缀名
 	 */
-	private String type;
+	private String ext;
 
 	/**
 	 * 文件地址
@@ -83,17 +83,17 @@ public class FileBean extends BaseOrm<FileBean> implements BaseEntity {
 	}
 
 	/**
-	 * @return the type
+	 * @return the ext
 	 */
-	public String getType() {
-		return type;
+	public String getExt() {
+		return ext;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param ext the ext to set
 	 */
-	public void setType(String type) {
-		this.type = type;
+	public void setExt(String ext) {
+		this.ext = ext;
 	}
 
 	/**
