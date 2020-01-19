@@ -15,6 +15,7 @@ import com.cc.common.exception.LogicException;
 import com.cc.common.orm.entity.BaseEntity;
 import com.cc.common.orm.mapper.CrudMapper;
 import com.cc.common.spring.SpringContextUtil;
+import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.GenericsUtils;
 import com.github.pagehelper.PageHelper;
@@ -133,6 +134,23 @@ public abstract class BaseOrm<T extends BaseEntity> {
 	}
 	
 	/**
+	 * 查询单条数据
+	 * @param tClass
+	 * @param values
+	 * @return
+	 */
+	public static <T> T findOneByParams(Class<T> tClass, Object... values){
+		if (values.length%2!=0) {
+			throw new LogicException("E001", "参数格式错误");
+		}
+		Map<String, Object> paramMap  = new HashMap<String, Object>();
+		for(int i = 0; i < values.length/2; i ++){
+			paramMap.put(StringTools.toString(values[2*i]), values[2*i+1]);
+		}
+		return findOneByMap(tClass, paramMap);
+	}
+	
+	/**
 	 * 查询列表
 	 * @param tClass
 	 * @param paramMap
@@ -159,6 +177,32 @@ public abstract class BaseOrm<T extends BaseEntity> {
 	}
 	
 	/**
+	 * 查询单条数据
+	 * @param tClass
+	 * @param paramMap
+	 * @return
+	 */
+	public static <T> T findOneByMap(Class<T> tClass, Map<String, Object> paramMap){
+		Example example = new Example(tClass);
+		Example.Criteria criteria = example.createCriteria();
+		if (paramMap!=null && !paramMap.isEmpty()) {
+			String sort = StringTools.toString(paramMap.get("sort"));
+			paramMap.remove("sort");
+			String order = StringTools.toString(paramMap.get("order"));
+			paramMap.remove("order");
+			if (!StringTools.isAnyNullOrNone(new String[]{sort, order})) {
+				PageHelper.orderBy(String.format("%s %s", sort, order));
+			}
+			Iterator<String> iterator = paramMap.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				criteria.andEqualTo(key, paramMap.get(key));
+			}
+		}
+		return findOneByExample(tClass, example);
+	}
+	
+	/**
 	 * 查询列表
 	 * @param tClass
 	 * @param example
@@ -167,6 +211,21 @@ public abstract class BaseOrm<T extends BaseEntity> {
 	public static <T> List<T> findByExample(Class<T> tClass, Object example){
 		CrudMapper<T> mapper = (CrudMapper<T>) SpringContextUtil.getBean(tClass.getSimpleName()+"Mapper");
 		return mapper.selectByExample(example);
+	}
+	
+	/**
+	 * 查询单条数据
+	 * @param tClass
+	 * @param example
+	 * @return
+	 */
+	public static <T> T findOneByExample(Class<T> tClass, Object example){
+		CrudMapper<T> mapper = (CrudMapper<T>) SpringContextUtil.getBean(tClass.getSimpleName()+"Mapper");
+		List<T> dataList = mapper.selectByExample(example);
+		if(ListTools.isEmptyOrNull(dataList)){
+			return null;
+		}
+		return dataList.get(0);
 	}
 	
 	/**

@@ -20,12 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.cc.app.bean.AppBean;
+import com.cc.app.service.AppService;
 import com.cc.common.exception.LogicException;
 import com.cc.file.bean.FileBean;
 import com.cc.file.config.FileConfig;
 import com.cc.file.service.FileService;
 import com.cc.file.strategy.FileStrategy;
-import com.cc.system.config.bean.SystemConfigBean;
+import com.cc.config.bean.ConfigBean;
+import com.cc.config.service.ConfigService;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
@@ -54,17 +57,23 @@ public class FileServiceImpl implements FileService {
 	@Autowired
 	private FileStrategy strategy;
 	
+	@Autowired
+	private ConfigService configService;
+	
+	@Autowired
+	private AppService appService;
+	
 	@Override
 	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String appCode = request.getHeader("appcode");
-			List<SystemConfigBean> fileAppCodeSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", "file.appCode");
-			if(ListTools.isEmptyOrNull(fileAppCodeSystemConfigBeanList) || "true".equals(fileAppCodeSystemConfigBeanList.get(0).getPropertyValue())){
+			ConfigBean fileAppCodeConfigBean = configService.queryConfigBean("file.appCode");
+			if(fileAppCodeConfigBean==null || "true".equals(fileAppCodeConfigBean.getPropertyValue())){
 				if(StringTools.isNullOrNone(appCode)){
 					throw new LogicException("E001", "未知应用，禁止上传");
 				}
-				List<SystemConfigBean> appCodeSystemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", appCode);
-		    	if(ListTools.isEmptyOrNull(appCodeSystemConfigBeanList)){
+				AppBean appBean = appService.queryAppBean(appCode);
+		    	if(appBean==null){
 		    		throw new LogicException("E002", "未知应用，禁止上传");
 		    	}
 			}

@@ -15,7 +15,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @EnableTransactionManagement
-@MapperScan(basePackages={"com.cc.system.*.mapper","com.cc.*.mapper","com.cc.system.*.dao","com.cc.*.dao"})
+@MapperScan(basePackages={"com.cc.*.mapper","com.cc.*.dao"})
 public class Application {
 
 	public static void main(String[] args) throws Exception {
