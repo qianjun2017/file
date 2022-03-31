@@ -9,7 +9,7 @@
   	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
   	<java.version>1.8</java.version>
-  	<spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+  	<spring.boot.version>2.5.12</spring.boot.version>
   	<spring.boot.mybatis.version>1.3.1</spring.boot.mybatis.version>
   	<spring.boot.mybatis.mapper.version>1.2.3</spring.boot.mybatis.mapper.version>
   	<spring.boot.mybatis.pagehelper.version>1.2.3</spring.boot.mybatis.pagehelper.version>
